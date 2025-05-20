@@ -1,0 +1,142 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jasperReport xmlns="http://jasperreports.sourceforge.net/jasperreports"
+              xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+              xsi:schemaLocation="http://jasperreports.sourceforge.net/jasperreports
+        http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+
+              name="ReporteVentas"
+              pageWidth="595" pageHeight="842"
+              columnWidth="515"
+              leftMargin="40" rightMargin="40" topMargin="50" bottomMargin="50">
+
+    <!-- Campos del bean Venta -->
+    <field name="id" class="java.lang.Integer"/>
+    <field name="fecha" class="java.time.LocalDateTime"/>
+    <field name="total" class="java.lang.Double"/>
+
+    <!-- Variables de totales -->
+    <variable name="sumSubtotal" class="java.lang.Double" calculation="Sum">
+        <variableExpression><![CDATA[$F{total}]]></variableExpression>
+    </variable>
+    <variable name="sumIva" class="java.lang.Double" calculation="Sum">
+        <variableExpression><![CDATA[$F{total} * 0.16]]></variableExpression>
+    </variable>
+    <variable name="sumTotalConIva" class="java.lang.Double" calculation="Sum">
+        <variableExpression><![CDATA[$F{total} * 1.16]]></variableExpression>
+    </variable>
+
+    <!-- Título -->
+    <title>
+        <band height="40">
+            <staticText>
+                <reportElement x="0" y="5" width="515" height="30"/>
+                <textElement textAlignment="Center">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[Reporte de Ventas]]></text>
+            </staticText>
+        </band>
+    </title>
+
+    <!-- Encabezado de columnas -->
+    <columnHeader>
+        <band height="30">
+            <staticText>
+                <reportElement x="0" y="0" width="50" height="30" mode="Opaque" backcolor="#FFDEAD"/>
+                <textElement textAlignment="Center">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[ID]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="50" y="0" width="150" height="30" mode="Opaque" backcolor="#FFDEAD"/>
+                <textElement textAlignment="Center">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Fecha]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="200" y="0" width="100" height="30" mode="Opaque" backcolor="#FFDEAD"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Subtotal]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="300" y="0" width="100" height="30" mode="Opaque" backcolor="#FFDEAD"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[IVA]]></text>
+            </staticText>
+            <staticText>
+                <reportElement x="400" y="0" width="115" height="30" mode="Opaque" backcolor="#FFDEAD"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total]]></text>
+            </staticText>
+        </band>
+    </columnHeader>
+
+    <!-- Detalle de cada venta -->
+    <detail>
+        <band height="20">
+            <textField>
+                <reportElement x="0" y="0" width="50" height="20" mode="Opaque" backcolor="#F5F5DC"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{id}]]></textFieldExpression>
+            </textField>
+            <textField pattern="yyyy-MM-dd HH:mm">
+                <reportElement x="50" y="0" width="150" height="20" mode="Opaque" backcolor="#F5F5DC"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression>
+                    <![CDATA[
+            new java.util.Date(
+              $F{fecha}.atZone(java.time.ZoneId.systemDefault())
+                         .toInstant().toEpochMilli()
+            )
+          ]]>
+                </textFieldExpression>
+            </textField>
+            <textField pattern="###0.00">
+                <reportElement x="200" y="0" width="100" height="20" mode="Opaque" backcolor="#F5F5DC"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[$F{total}]]></textFieldExpression>
+            </textField>
+            <textField pattern="###0.00">
+                <reportElement x="300" y="0" width="100" height="20" mode="Opaque" backcolor="#F5F5DC"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[$F{total} * 0.16]]></textFieldExpression>
+            </textField>
+            <textField pattern="###0.00">
+                <reportElement x="400" y="0" width="115" height="20" mode="Opaque" backcolor="#F5F5DC"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[$F{total} * 1.16]]></textFieldExpression>
+            </textField>
+        </band>
+    </detail>
+
+    <!-- Resumen de totales (height aumentado a 50) -->
+    <summary>
+        <band height="50">
+            <staticText>
+                <reportElement x="200" y="0" width="200" height="20"/>
+                <text><![CDATA[Totales: Subtotal / IVA / Total]]></text>
+            </staticText>
+            <textField pattern="###0.00">
+                <reportElement x="200" y="20" width="100" height="20"/>
+                <textFieldExpression><![CDATA[$V{sumSubtotal}]]></textFieldExpression>
+            </textField>
+            <textField pattern="###0.00">
+                <reportElement x="300" y="20" width="100" height="20"/>
+                <textFieldExpression><![CDATA[$V{sumIva}]]></textFieldExpression>
+            </textField>
+            <textField pattern="###0.00">
+                <reportElement x="400" y="20" width="115" height="20"/>
+                <textFieldExpression><![CDATA[$V{sumTotalConIva}]]></textFieldExpression>
+            </textField>
+        </band>
+    </summary>
+
+</jasperReport>
